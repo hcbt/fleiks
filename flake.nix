@@ -33,7 +33,7 @@
           };
         in
         {
-          inherit (pkgs) muse-code opencodex;
+          inherit (pkgs) muse-code opencodex utm;
         }
       );
     };

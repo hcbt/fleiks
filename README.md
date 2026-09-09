@@ -7,6 +7,7 @@ package under `pkgs/`. The flake exports `overlays.default` and
 ```
 nix run github:hcbt/fleiks#muse-code -- --version
 nix run github:hcbt/fleiks#opencodex -- --version
+nix run github:hcbt/fleiks#utm
 ```
 
 ## Packages
@@ -15,6 +16,7 @@ nix run github:hcbt/fleiks#opencodex -- --version
 | ----------- | ------- | ------------------------------------------ |
 | `muse-code` | `muse`  | Meta Muse Code CLI. Unfree native binary.  |
 | `opencodex` | `ocx`   | Provider proxy for Codex / Claude Code. MIT. Also installs `opencodex`. |
+| `utm`       | `UTM`   | Virtual machines for macOS. Apache-2.0 dmg; newer than nixpkgs 4.7.5. Darwin only. |
 
 ## Flake
 
@@ -42,8 +44,9 @@ Apply the overlay so the packages show up on `pkgs`. Unfree packages need
   environment.systemPackages = [
     pkgs.muse-code
     pkgs.opencodex
+    pkgs.utm
   ];
-  # home.packages = [ pkgs.muse-code pkgs.opencodex ];
+  # home.packages = [ pkgs.muse-code pkgs.opencodex pkgs.utm ];
 }
 ```
 
@@ -51,7 +54,7 @@ Without an overlay, take the flake package directly:
 
 ```nix
 inputs.fleiks.packages.${pkgs.stdenv.hostPlatform.system}.muse-code
-# or .opencodex
+# or .opencodex / .utm
 ```
 
 ## devenv
@@ -85,6 +88,7 @@ inputs:
   packages = [
     pkgs.muse-code
     pkgs.opencodex
+    pkgs.utm
   ];
 }
 ```
@@ -97,6 +101,7 @@ Without the yaml overlay, pull the package from the flake output:
   packages = [
     inputs.fleiks.packages.${pkgs.stdenv.system}.muse-code
     inputs.fleiks.packages.${pkgs.stdenv.system}.opencodex
+    inputs.fleiks.packages.${pkgs.stdenv.system}.utm
   ];
 }
 ```
