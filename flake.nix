@@ -33,7 +33,7 @@
           };
         in
         {
-          inherit (pkgs) muse-code;
+          inherit (pkgs) muse-code opencodex;
         }
       );
     };
