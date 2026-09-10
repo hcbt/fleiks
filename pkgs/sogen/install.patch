@@ -1,11 +1,14 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -166,3 +166,12 @@
+@@ -166,3 +166,15 @@
      endif()
    endforeach()
  endif()
 +
++if(SOGEN_ENABLE_STEAM AND NOT TARGET steam-host-backend)
++  message(FATAL_ERROR "Steam bridge was requested but its backend was not generated")
++endif()
 +install(TARGETS analyzer RUNTIME DESTINATION bin COMPONENT sogen)
 +if(SOGEN_ENABLE_FEX)
 +  install(FILES "$<TARGET_FILE:fexcore>" DESTINATION bin COMPONENT sogen)

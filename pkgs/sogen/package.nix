@@ -7,7 +7,17 @@
   python3,
   pkg-config,
   sdl3,
+  pkgsCross,
+  replaceVars,
 }:
+let
+  steamworks = fetchFromGitHub {
+    owner = "ValveSoftware";
+    repo = "Proton";
+    rev = "5b89db940e0ebe3a137a6009a3589232fe084c09";
+    hash = "sha256-VSxOPicISnyoN3v62OIztwX5gN6nD+qXPxqT2Xdnp94=";
+  };
+in
 stdenv.mkDerivation {
   pname = "sogen";
   version = "0-unstable-2026-09-09";
@@ -25,18 +35,22 @@ stdenv.mkDerivation {
   patches = [
     ./install.patch
     ./fex-version.patch
+    (replaceVars ./steam-headers.patch {
+      mingwHeaders = pkgsCross.mingwW64.windows.mingw_w64_headers;
+    })
   ];
   nativeBuildInputs = [
     cmake
     ninja
-    python3
+    (python3.withPackages (ps: [ ps.clang ]))
     pkg-config
   ];
   buildInputs = [ sdl3 ];
   cmakeFlags = [
     (lib.cmakeBool "SOGEN_BUILD_STATIC" true)
     (lib.cmakeBool "SOGEN_ENABLE_RUST_CODE" false)
-    (lib.cmakeBool "SOGEN_ENABLE_STEAM" false)
+    (lib.cmakeBool "SOGEN_ENABLE_STEAM" true)
+    (lib.cmakeFeature "FETCHCONTENT_SOURCE_DIR_STEAMWORKS_SNAPSHOTS" "${steamworks}")
     (lib.cmakeBool "SOGEN_ENABLE_LTO" false)
     (lib.cmakeBool "SOGEN_ENABLE_AVX2" false)
     (lib.cmakeBool "CMAKE_SKIP_INSTALL_ALL_DEPENDENCY" true)

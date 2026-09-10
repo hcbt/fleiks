@@ -1,0 +1,23 @@
+diff --git a/src/tools/steam-bridge-generator/generate.py b/src/tools/steam-bridge-generator/generate.py
+--- a/src/tools/steam-bridge-generator/generate.py
++++ b/src/tools/steam-bridge-generator/generate.py
+@@ -611,8 +611,17 @@
+     args = ["-x", "c++", "-std=c++14", "-D_WIN32", "-DAPI_GEN", "-fms-extensions",
+             "-Wno-ignored-attributes", "-Wno-nonportable-include-path", "-target", target, "-I", sdk_dir]
++    # Keep the MSVC target ABI, but use MinGW's C headers on non-Windows build hosts.
++    # Clang accepts GNU nothrow attributes, but not trailing MSVC declspec in stdio.h.
++    args += ["-isystem", "@mingwHeaders@/include"]
+     src = '#include "steam_api.h"\n#include "steam_gameserver.h"\n'
++    src = '#include <_mingw.h>\n#undef __MINGW_NOTHROW\n' + \
++          '#define __MINGW_NOTHROW __attribute__((__nothrow__))\n' + src
+-    return cx.Index.create().parse("s.cpp", args=args, unsaved_files=[("s.cpp", src)],
+-                                   options=cx.TranslationUnit.PARSE_SKIP_FUNCTION_BODIES)
++    tu = cx.Index.create().parse("s.cpp", args=args, unsaved_files=[("s.cpp", src)],
++                                 options=cx.TranslationUnit.PARSE_SKIP_FUNCTION_BODIES)
++    errors = [str(d) for d in tu.diagnostics if d.severity >= cx.Diagnostic.Error]
++    if errors:
++        raise RuntimeError("Steam SDK parsing failed:\n" + "\n".join(errors))
++    return tu
+ 
+ 
+ def _record_has_pointer(decl, seen) -> bool:
