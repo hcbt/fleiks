@@ -1,0 +1,16 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -166,3 +166,12 @@
+     endif()
+   endforeach()
+ endif()
++
++install(TARGETS analyzer RUNTIME DESTINATION bin COMPONENT sogen)
++if(SOGEN_ENABLE_FEX)
++  install(FILES "$<TARGET_FILE:fexcore>" DESTINATION bin COMPONENT sogen)
++endif()
++add_custom_target(sogen-install
++  COMMAND "${CMAKE_COMMAND}" --install "${CMAKE_BINARY_DIR}" --component sogen
++  DEPENDS analyzer
++)

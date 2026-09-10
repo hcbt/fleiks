@@ -7,6 +7,7 @@ package under `pkgs/`. The flake exports `overlays.default` and
 ```
 nix run github:hcbt/fleiks#muse-code -- --version
 nix run github:hcbt/fleiks#opencodex -- --version
+nix run github:hcbt/fleiks#sogen -- --help
 nix run github:hcbt/fleiks#utm
 ```
 
@@ -16,7 +17,18 @@ nix run github:hcbt/fleiks#utm
 | ----------- | ------- | ------------------------------------------ |
 | `muse-code` | `muse`  | Meta Muse Code CLI. Unfree native binary.  |
 | `opencodex` | `ocx`   | Provider proxy for Codex / Claude Code. MIT. Also installs `opencodex`. |
+| `sogen`     | `analyzer` | Windows and Linux userspace emulator with GDB support. GPL-2.0-only. |
 | `utm`       | `UTM`   | Virtual machines for macOS. Apache-2.0 dmg; newer than nixpkgs 4.7.5. Darwin only. |
+
+Sogen is built from a pinned source commit with SDL3 support. The optional
+Rust (Icicle) backend, Steam bridge, and Python bindings are disabled. Windows
+emulation requires a separate emulation root; see the
+[upstream setup guide](https://github.com/momo5502/sogen/wiki).
+
+```
+nix run github:hcbt/fleiks#sogen -- -e /path/to/root /path/to/program.exe
+EMULATOR_LINUX=1 nix run github:hcbt/fleiks#sogen -- --root /path/to/root /path/to/program
+```
 
 ## Flake
 

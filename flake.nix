@@ -33,7 +33,12 @@
           };
         in
         {
-          inherit (pkgs) muse-code opencodex utm;
+          inherit (pkgs)
+            muse-code
+            opencodex
+            sogen
+            utm
+            ;
         }
       );
     };

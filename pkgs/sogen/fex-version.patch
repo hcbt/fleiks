@@ -1,0 +1,12 @@
+diff --git a/cmake/fex.cmake b/cmake/fex.cmake
+--- a/cmake/fex.cmake
++++ b/cmake/fex.cmake
+@@ -74,6 +74,8 @@
+     CMAKE_GENERATOR "Ninja"
+     CMAKE_ARGS
+       -DCMAKE_BUILD_TYPE=${_FEXCORE_BUILD_TYPE}
++      -DOVERRIDE_HASH=ff4f18b2c320a8a2309343453910e1910b6d261d
++      -DOVERRIDE_VERSION=FEX-ff4f18b
+       -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+       -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+       ${_FEXCORE_OSX_ARGS}
