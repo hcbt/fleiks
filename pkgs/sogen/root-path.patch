@@ -1,0 +1,14 @@
+--- a/src/windows-analyzer/main.cpp
++++ b/src/windows-analyzer/main.cpp
+@@ -939,6 +939,11 @@
+ 
+             CLI11_PARSE(app, argc, argv);
+ 
++            if (options.emulation_root == "root")
++            {
++                options.emulation_root = "@sogenRoot@";
++            }
++
+             if (argc <= 1)
+             {
+                 puts(app.help().c_str());

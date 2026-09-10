@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchFromGitHub,
+  fetchzip,
   cmake,
   ninja,
   python3,
@@ -11,6 +12,10 @@
   replaceVars,
 }:
 let
+  emulationRoot = fetchzip {
+    url = "https://sogen.dev/root.zip";
+    hash = "sha256-K+wGMGoaWEoRoig0uRCEOSbC4vQJ/vndiJW+rAZGh7A=";
+  };
   steamworks = fetchFromGitHub {
     owner = "ValveSoftware";
     repo = "Proton";
@@ -35,6 +40,7 @@ stdenv.mkDerivation {
   patches = [
     ./install.patch
     ./fex-version.patch
+    (replaceVars ./root-path.patch { sogenRoot = emulationRoot; })
     (replaceVars ./steam-headers.patch {
       mingwHeaders = pkgsCross.mingwW64.windows.mingw_w64_headers;
     })
