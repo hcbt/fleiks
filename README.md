@@ -35,6 +35,23 @@ The Steam bridge needs a running host Steam client, the guest Steam shim in your
 emulation root, and the game's `SteamAppId` set on both the host and guest. See
 [upstream Steam setup](https://github.com/momo5502/sogen/blob/main/docs/steam-bridge.md#running-a-real-game).
 
+On macOS, do not run `grab-registry.bat`: that script captures a Windows host's
+registry and is only needed when building a root on Windows. Download the
+published root instead:
+
+```sh
+curl -L https://sogen.dev/root.zip -o root.zip
+unzip root.zip
+EMULATOR_LINUX=0 nix run github:hcbt/fleiks#sogen -- \
+  -e root c:/test-sample.exe
+```
+
+The published root includes `api-set.bin`, the registry hives, Windows system
+DLLs, and both `steamclient.dll` and `steamclient64.dll` under `root/filesys/c/steam`.
+The macOS host bridge loads Steam from its standard location. Set
+`SOGEN_STEAMCLIENT` if Steam is installed elsewhere, and set `SteamAppId` to the
+game's real app ID before launching it.
+
 ## Flake
 
 Pin the input and follow your nixpkgs:
