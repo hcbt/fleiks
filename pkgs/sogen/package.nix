@@ -40,6 +40,8 @@ stdenv.mkDerivation {
   patches = [
     ./install.patch
     ./fex-version.patch
+    ./ntdeletekey.patch
+    ./ntdeletekey-registration.patch
     (replaceVars ./root-path.patch { sogenRoot = emulationRoot; })
     (replaceVars ./steam-headers.patch {
       mingwHeaders = pkgsCross.mingwW64.windows.mingw_w64_headers;
