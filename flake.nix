@@ -39,6 +39,7 @@
             opencodex
             sogen
             utm
+            xirp
             ;
         }
       );
