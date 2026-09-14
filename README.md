@@ -5,20 +5,21 @@ package under `pkgs/`. The flake exports `overlays.default` and
 `packages.<system>.<name>`.
 
 ```
+nix run github:hcbt/fleiks#liqoctl -- version --client
 nix run github:hcbt/fleiks#muse-code -- --version
 nix run github:hcbt/fleiks#opencodex -- --version
 nix run github:hcbt/fleiks#sogen -- --help
 nix run github:hcbt/fleiks#utm
-```
 
 ## Packages
 
-| Attribute   | Program | Notes                                      |
-| ----------- | ------- | ------------------------------------------ |
-| `muse-code` | `muse`  | Meta Muse Code CLI. Unfree native binary.  |
-| `opencodex` | `ocx`   | Provider proxy for Codex / Claude Code. MIT. Also installs `opencodex`. |
+| Attribute   | Program    | Notes                                      |
+| ----------- | ---------- | ------------------------------------------ |
+| `liqoctl`   | `liqoctl`  | Liqo CLI for multi-cluster Kubernetes. Apache-2.0. |
+| `muse-code` | `muse`     | Meta Muse Code CLI. Unfree native binary.  |
+| `opencodex` | `ocx`      | Provider proxy for Codex / Claude Code. MIT. Also installs `opencodex`. |
 | `sogen`     | `analyzer` | Windows and Linux userspace emulator with GDB support. GPL-2.0-only. |
-| `utm`       | `UTM`   | Virtual machines for macOS. Apache-2.0 dmg; newer than nixpkgs 4.7.5. Darwin only. |
+| `utm`       | `UTM`      | Virtual machines for macOS. Apache-2.0 dmg; newer than nixpkgs 4.7.5. Darwin only. |
 
 Sogen is built from a pinned source commit with SDL3 and the Steam bridge enabled.
 Steamworks headers are pinned from Valve's Proton repository and the bridge is
@@ -75,19 +76,20 @@ Apply the overlay so the packages show up on `pkgs`. Unfree packages need
   };
 
   environment.systemPackages = [
+    pkgs.liqoctl
     pkgs.muse-code
     pkgs.opencodex
     pkgs.utm
   ];
-  # home.packages = [ pkgs.muse-code pkgs.opencodex pkgs.utm ];
+  # home.packages = [ pkgs.liqoctl pkgs.muse-code pkgs.opencodex pkgs.utm ];
 }
 ```
 
 Without an overlay, take the flake package directly:
 
 ```nix
-inputs.fleiks.packages.${pkgs.stdenv.hostPlatform.system}.muse-code
-# or .opencodex / .utm
+inputs.fleiks.packages.${pkgs.stdenv.hostPlatform.system}.liqoctl
+# or .muse-code / .opencodex / .utm
 ```
 
 ## devenv
@@ -119,6 +121,7 @@ inputs:
 { pkgs, ... }:
 {
   packages = [
+    pkgs.liqoctl
     pkgs.muse-code
     pkgs.opencodex
     pkgs.utm
@@ -132,6 +135,7 @@ Without the yaml overlay, pull the package from the flake output:
 { pkgs, inputs, ... }:
 {
   packages = [
+    inputs.fleiks.packages.${pkgs.stdenv.system}.liqoctl
     inputs.fleiks.packages.${pkgs.stdenv.system}.muse-code
     inputs.fleiks.packages.${pkgs.stdenv.system}.opencodex
     inputs.fleiks.packages.${pkgs.stdenv.system}.utm

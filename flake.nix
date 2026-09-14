@@ -34,6 +34,7 @@
         in
         {
           inherit (pkgs)
+            liqoctl
             muse-code
             opencodex
             sogen
