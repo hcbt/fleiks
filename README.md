@@ -10,6 +10,7 @@ nix run github:hcbt/fleiks#muse-code -- --version
 nix run github:hcbt/fleiks#opencodex -- --version
 nix run github:hcbt/fleiks#sogen -- --help
 nix run github:hcbt/fleiks#utm
+```
 
 ## Packages
 
