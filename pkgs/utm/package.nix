@@ -6,16 +6,16 @@
   stdenvNoCC,
 }:
 
-# nixpkgs utm is still 4.7.5. This is the GitHub v5.0.5 (beta) dmg.
+# nixpkgs utm is still 4.7.5. This is the GitHub v5.0.6 (beta) dmg.
 # Bump: take version from https://github.com/utmapp/UTM/releases and the
 # UTM.dmg sha256 from that release's asset digest.
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "utm";
-  version = "5.0.5";
+  version = "5.0.6";
 
   src = fetchurl {
     url = "https://github.com/utmapp/UTM/releases/download/v${finalAttrs.version}/UTM.dmg";
-    hash = "sha256-cTr+c8cR8BNEuHZmVL5THNOR7S4wkxIG9DtRWfFDdk8=";
+    hash = "sha256-anIkhqZg4Kss9YJrvq7g9ZY5mQKTZnCfWjBI1zsdfLE=";
   };
 
   nativeBuildInputs = [
@@ -50,4 +50,3 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
   };
 })
-

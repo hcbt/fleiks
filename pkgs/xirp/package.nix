@@ -11,7 +11,7 @@
 #   https://reckless-finch.spotifycdn.com/external/Xirp-${version}-arm64-external.dmg
 #   https://reckless-finch.spotifycdn.com/external/Xirp-${version}-x64-external.dmg
 let
-  version = "0.32.0";
+  version = "0.40.1";
   isArm = stdenvNoCC.hostPlatform.isAarch64;
 in
 stdenvNoCC.mkDerivation {
@@ -24,9 +24,9 @@ stdenvNoCC.mkDerivation {
     }-external.dmg";
     hash =
       if isArm then
-        "sha256-EB4blLkWM4AtHDJcExyKcGEzfe5eWweMxWpxlxaHDmY="
+        "sha256-Zf8hONKZoIPmVEW6pH+w0Mnxyo+kEpqHflFm8+qrXiI="
       else
-        "sha256-B1ERFdEr/3nrrggPOghX1Migoi/lZ7vFCkqu4NpxVo4=";
+        "sha256-PQz8N21Y706VSV5E4mYjV9f33/tLjNE4OIefDG0AHYk=";
   };
 
   nativeBuildInputs = [
