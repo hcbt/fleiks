@@ -29,8 +29,10 @@ python3Packages.buildPythonApplication (finalAttrs: {
 
   build-system = with python3Packages; [ uv-build ];
 
-  # Linux metadata pins mlx[cuda13]==0.32.2. nixpkgs mlx is 0.32.0 and is
-  # OpenBLAS there, not the CUDA extra. Relax so the wheel check accepts it.
+  # Source mlx is built with MLX_BUILD_METAL=false. The Metal shader
+  # compiler is not in the Nix sandbox, and this machine has no Metal
+  # toolchain, so a from-source Metal build cannot run. mlx-bin is the
+  # same 0.32.0 release with the Metal runtime.
   pythonRelaxDeps = [ "mlx" ];
 
   dependencies = with python3Packages; [
@@ -40,7 +42,7 @@ python3Packages.buildPythonApplication (finalAttrs: {
     hf-transfer
     huggingface-hub
     matplotlib
-    mlx
+    mlx-bin
     numpy
     opencv-python
     piexif
