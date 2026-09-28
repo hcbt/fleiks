@@ -44,5 +44,12 @@
             ;
         }
       );
+
+      # nix run only starts meta.mainProgram, and attr paths split on `.`,
+      # so the binary mflux-generate-qwen-2.1 is this app.
+      apps.aarch64-darwin.mflux-generate-qwen-21 = {
+        type = "app";
+        program = "${self.packages.aarch64-darwin.mflux}/bin/mflux-generate-qwen-2.1";
+      };
     };
 }

@@ -1,12 +1,13 @@
 # fleiks
 
 Nix packages that are not in nixpkgs, or not the build we want. One directory per
-package under `pkgs/`. The flake exports `overlays.default` and
-`packages.<system>.<name>`.
+package under `pkgs/`. The flake exports `overlays.default`,
+`packages.<system>.<name>`, and `apps.aarch64-darwin.mflux-generate-qwen-21`.
 
 ```
 nix run github:hcbt/fleiks#liqoctl -- version --client
 nix run github:hcbt/fleiks#mflux -- --help
+nix run github:hcbt/fleiks#mflux-generate-qwen-21 -- --help
 nix run github:hcbt/fleiks#muse-code -- --version
 nix run github:hcbt/fleiks#opencodex -- --version
 nix run github:hcbt/fleiks#sogen -- --help
