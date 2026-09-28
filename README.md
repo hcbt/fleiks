@@ -6,6 +6,7 @@ package under `pkgs/`. The flake exports `overlays.default` and
 
 ```
 nix run github:hcbt/fleiks#liqoctl -- version --client
+nix run github:hcbt/fleiks#mflux -- --help
 nix run github:hcbt/fleiks#muse-code -- --version
 nix run github:hcbt/fleiks#opencodex -- --version
 nix run github:hcbt/fleiks#sogen -- --help
@@ -15,14 +16,15 @@ nix run github:hcbt/fleiks#xirp
 
 ## Packages
 
-| Attribute   | Program    | Notes                                      |
-| ----------- | ---------- | ------------------------------------------ |
-| `liqoctl`   | `liqoctl`  | Liqo CLI for multi-cluster Kubernetes. Apache-2.0. |
-| `muse-code` | `muse`     | Meta Muse Code CLI. Unfree native binary.  |
-| `opencodex` | `ocx`      | Provider proxy for Codex / Claude Code. MIT. Also installs `opencodex`. |
-| `sogen`     | `analyzer` | Windows and Linux userspace emulator with GDB support. GPL-2.0-only. |
-| `utm`       | `UTM`      | Virtual machines for macOS. Apache-2.0 dmg; newer than nixpkgs 4.7.5. Darwin only. |
-| `xirp`      | `xirp`     | Spotify AI coding agent with Portal. Unfree Darwin dmg. |
+| Attribute   | Program          | Notes                                      |
+| ----------- | ---------------- | ------------------------------------------ |
+| `liqoctl`   | `liqoctl`        | Liqo CLI for multi-cluster Kubernetes. Apache-2.0. |
+| `mflux`     | `mflux-generate` | MLX image models. MIT. Apple Silicon only. Newer than nixpkgs 0.15.4. |
+| `muse-code` | `muse`           | Meta Muse Code CLI. Unfree native binary.  |
+| `opencodex` | `ocx`            | Provider proxy for Codex / Claude Code. MIT. Also installs `opencodex`. |
+| `sogen`     | `analyzer`       | Windows and Linux userspace emulator with GDB support. GPL-2.0-only. |
+| `utm`       | `UTM`            | Virtual machines for macOS. Apache-2.0 dmg; newer than nixpkgs 4.7.5. Darwin only. |
+| `xirp`      | `xirp`           | Spotify AI coding agent with Portal. Unfree Darwin dmg. |
 
 Sogen is built from a pinned source commit with SDL3 and the Steam bridge enabled.
 Steamworks headers are pinned from Valve's Proton repository and the bridge is
@@ -80,12 +82,13 @@ Apply the overlay so the packages show up on `pkgs`. Unfree packages need
 
   environment.systemPackages = [
     pkgs.liqoctl
+    pkgs.mflux
     pkgs.muse-code
     pkgs.opencodex
     pkgs.utm
     pkgs.xirp
   ];
-  # home.packages = [ pkgs.liqoctl pkgs.muse-code pkgs.opencodex pkgs.utm pkgs.xirp ];
+  # home.packages = [ pkgs.liqoctl pkgs.mflux pkgs.muse-code pkgs.opencodex pkgs.utm pkgs.xirp ];
 }
 ```
 
@@ -93,7 +96,7 @@ Without an overlay, take the flake package directly:
 
 ```nix
 inputs.fleiks.packages.${pkgs.stdenv.hostPlatform.system}.liqoctl
-# or .muse-code / .opencodex / .utm / .xirp
+# or .mflux / .muse-code / .opencodex / .utm / .xirp
 ```
 
 ## devenv
@@ -126,11 +129,11 @@ inputs:
 {
   packages = [
     pkgs.liqoctl
+    pkgs.mflux
     pkgs.muse-code
     pkgs.opencodex
     pkgs.utm
     pkgs.xirp
-  ];
 }
 ```
 
@@ -141,10 +144,10 @@ Without the yaml overlay, pull the package from the flake output:
 {
   packages = [
     inputs.fleiks.packages.${pkgs.stdenv.system}.liqoctl
+    inputs.fleiks.packages.${pkgs.stdenv.system}.mflux
     inputs.fleiks.packages.${pkgs.stdenv.system}.muse-code
     inputs.fleiks.packages.${pkgs.stdenv.system}.opencodex
     inputs.fleiks.packages.${pkgs.stdenv.system}.utm
     inputs.fleiks.packages.${pkgs.stdenv.system}.xirp
-  ];
 }
 ```

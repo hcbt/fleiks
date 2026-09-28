@@ -35,6 +35,7 @@
         {
           inherit (pkgs)
             liqoctl
+            mflux
             muse-code
             opencodex
             sogen
