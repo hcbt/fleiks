@@ -40,6 +40,7 @@
             notproton
             opencodex
             sogen
+            steam
             utm
             xirp
             ;
