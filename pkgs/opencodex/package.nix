@@ -35,16 +35,16 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "opencodex";
-  version = "2.68.0";
+  version = "2.84.0";
 
   src = fetchzip {
     url = "https://registry.npmjs.org/@bitkyc08/opencodex/-/opencodex-${finalAttrs.version}.tgz";
-    hash = "sha256-puzjxWsLqjRA+3hSQXXT4pUx/t9U8JSl3RaQMcVQDd8=";
+    hash = "sha256-F/vasfNZUPfJenr1UlTrET2ZW/xxE0Z/7QsZYY365M0=";
   };
 
   bunLock = fetchurl {
     url = "https://raw.githubusercontent.com/lidge-jun/opencodex/v${finalAttrs.version}/bun.lock";
-    hash = "sha256-LcU/WvVuy/Jpy2knabTJkQ+dGqHXZYrk3rZkRBKfzf0=";
+    hash = "sha256-6B58rZq7oSUVhS0zWOb0fvPxWkxMpTOceEIIhUPSPdk=";
   };
 
   # Bump: npm view @bitkyc08/opencodex version, then src, bunLock, and
@@ -84,7 +84,7 @@ stdenv.mkDerivation (finalAttrs: {
 
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
-    outputHash = "sha256-fJS5Qe0F58LX2i0VEwZOQpqgPFGbIKaFH83ESVaq9IE=";
+    outputHash = "sha256-WzvXwzhTdOFv2Orcqn6eNCTDehTMuILHhdG20BYVuP0=";
   };
 
   nativeBuildInputs = [

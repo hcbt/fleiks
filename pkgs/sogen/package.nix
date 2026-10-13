@@ -14,7 +14,7 @@
 let
   emulationRoot = fetchzip {
     url = "https://sogen.dev/root.zip";
-    hash = "sha256-1bb5QNW2Pc3lYkvOx6Ol7dG5pfC12HxVOxMfOKYpS30=";
+    hash = "sha256-17Gx1L5US2hz0eT/B1gvtUsakU7jXVQtr0p36LPUQyY=";
   };
   steamworks = fetchFromGitHub {
     owner = "ValveSoftware";
@@ -25,14 +25,14 @@ let
 in
 stdenv.mkDerivation {
   pname = "sogen";
-  version = "0-unstable-2026-09-22";
+  version = "0-unstable-2026-10-13";
 
   src = fetchFromGitHub {
     owner = "momo5502";
     repo = "sogen";
-    rev = "4b43b2c4db45e223522ec4a6b5e7ac65d01ffdd9";
+    rev = "d2552458877238ec0a4f68a1ae0e0c1a2118a50c";
     fetchSubmodules = true;
-    hash = "sha256-TdjlL6hwyIwdjv9aoFxlgwbslv/CFDN1tXcchJoRjfY=";
+    hash = "sha256-14WrfPwJ8MYWvkAPIz2jTIe0jB4hxHBbWKe/UnsZaBU=";
   };
 
   # FEX requires its git hash even when building an exported source tree.

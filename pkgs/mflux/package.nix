@@ -10,14 +10,14 @@
 # then the src hash. Tag is v.<version>, not v<version>.
 python3Packages.buildPythonApplication (finalAttrs: {
   pname = "mflux";
-  version = "0.20.0";
+  version = "0.22.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "mflux-community";
     repo = "mflux";
     tag = "v.${finalAttrs.version}";
-    hash = "sha256-lKnGhtEZYxrdTARfZa0sN4zVqDQFLC+2xzVNw1ddmZQ=";
+    hash = "sha256-Utc+U8yQ01h8hAXKoOFxc2xY+nvtx5BzTNSbh4gQL7A=";
   };
 
   # nixpkgs uv-build is 0.11.28; it already implements the build-backend
@@ -33,12 +33,17 @@ python3Packages.buildPythonApplication (finalAttrs: {
   # compiler is not in the Nix sandbox, and this machine has no Metal
   # toolchain, so a from-source Metal build cannot run. mlx-bin is the
   # same 0.32.0 release with the Metal runtime.
-  pythonRelaxDeps = [ "mlx" ];
+  # nixpkgs urllib3 is 2.7.0; upstream floors it at 2.8.0.
+  pythonRelaxDeps = [
+    "mlx"
+    "urllib3"
+  ];
 
   dependencies = with python3Packages; [
     anyio
     filelock
     fonttools
+    fsspec
     hf-transfer
     huggingface-hub
     matplotlib
