@@ -9,6 +9,7 @@ nix run github:hcbt/fleiks#liqoctl -- version --client
 nix run github:hcbt/fleiks#mflux -- --help
 nix run github:hcbt/fleiks#mflux-generate-qwen-21 -- --help
 nix run github:hcbt/fleiks#muse-code -- --version
+nix run github:hcbt/fleiks#notproton
 nix run github:hcbt/fleiks#opencodex -- --version
 nix run github:hcbt/fleiks#sogen -- --help
 nix run github:hcbt/fleiks#utm
@@ -22,6 +23,7 @@ nix run github:hcbt/fleiks#xirp
 | `liqoctl`   | `liqoctl`        | Liqo CLI for multi-cluster Kubernetes. Apache-2.0. |
 | `mflux`     | `mflux-generate` | MLX image models. MIT. Apple Silicon only. Newer than nixpkgs 0.15.4. |
 | `muse-code` | `muse`           | Meta Muse Code CLI. Unfree native binary.  |
+| `notproton` | `notproton`      | Steam Play for macOS Steam via CrossOver. GPL-3.0-only. Darwin arm64 only; needs macOS 15+. |
 | `opencodex` | `ocx`            | Provider proxy for Codex / Claude Code. MIT. Also installs `opencodex`. |
 | `sogen`     | `analyzer`       | Windows and Linux userspace emulator with GDB support. GPL-2.0-only. |
 | `utm`       | `UTM`            | Virtual machines for macOS. Apache-2.0 dmg; newer than nixpkgs 4.7.5. Darwin only. |
@@ -85,11 +87,12 @@ Apply the overlay so the packages show up on `pkgs`. Unfree packages need
     pkgs.liqoctl
     pkgs.mflux
     pkgs.muse-code
+    pkgs.notproton
     pkgs.opencodex
     pkgs.utm
     pkgs.xirp
   ];
-  # home.packages = [ pkgs.liqoctl pkgs.mflux pkgs.muse-code pkgs.opencodex pkgs.utm pkgs.xirp ];
+  # home.packages = [ pkgs.liqoctl pkgs.mflux pkgs.muse-code pkgs.notproton pkgs.opencodex pkgs.utm pkgs.xirp ];
 }
 ```
 
@@ -97,7 +100,7 @@ Without an overlay, take the flake package directly:
 
 ```nix
 inputs.fleiks.packages.${pkgs.stdenv.hostPlatform.system}.liqoctl
-# or .mflux / .muse-code / .opencodex / .utm / .xirp
+# or .mflux / .muse-code / .notproton / .opencodex / .utm / .xirp
 ```
 
 ## devenv
@@ -132,6 +135,7 @@ inputs:
     pkgs.liqoctl
     pkgs.mflux
     pkgs.muse-code
+    pkgs.notproton
     pkgs.opencodex
     pkgs.utm
     pkgs.xirp
@@ -147,6 +151,7 @@ Without the yaml overlay, pull the package from the flake output:
     inputs.fleiks.packages.${pkgs.stdenv.system}.liqoctl
     inputs.fleiks.packages.${pkgs.stdenv.system}.mflux
     inputs.fleiks.packages.${pkgs.stdenv.system}.muse-code
+    inputs.fleiks.packages.${pkgs.stdenv.system}.notproton
     inputs.fleiks.packages.${pkgs.stdenv.system}.opencodex
     inputs.fleiks.packages.${pkgs.stdenv.system}.utm
     inputs.fleiks.packages.${pkgs.stdenv.system}.xirp

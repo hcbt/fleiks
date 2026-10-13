@@ -37,6 +37,7 @@
             liqoctl
             mflux
             muse-code
+            notproton
             opencodex
             sogen
             utm
