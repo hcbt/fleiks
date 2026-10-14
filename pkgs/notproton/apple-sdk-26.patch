@@ -5313,3 +5313,67 @@ diff -r np-upstream/app/Sources/NotProtonApp/Views/StatusView.swift np-patched/a
          try locate(root: try root(in: bundle))
      }
  
+--- a/app/Sources/NotProtonApp/Support/Launch.swift	2026-10-14 04:21:15.000000000 +0300
++++ b/app/Sources/NotProtonApp/Support/Launch.swift	2026-10-14 14:06:17.686500641 +0300
+@@ -6,6 +6,9 @@
+         if CommandLine.arguments.dropFirst().contains(RemoveEverythingCommand.flag) {
+             RemoveEverythingCommand.run()
+         }
++        if CommandLine.arguments.dropFirst().contains(SetupCommand.flag) {
++            SetupCommand.run()
++        }
+         NotProtonApp.main()
+     }
+ }
+--- /dev/null	2026-10-14 14:08:32.064707000 +0300
++++ b/app/Sources/NotProtonApp/Support/SetupCommand.swift	2026-10-14 14:08:24.063436764 +0300
+@@ -0,0 +1,49 @@
++import Foundation
++
++enum SetupCommand {
++    static let flag = "--setup"
++
++    static func run() -> Never {
++        Task.detached { exit(await perform()) }
++        dispatchMain()
++    }
++
++    static func perform() async -> Int32 {
++        let output = Output()
++        do {
++            let result = try SteamInstaller.run(report: { output.say($0.label) })
++            output.say("NotProton successfully installed.")
++
++            if let install = CrossOverSource.discover().first(where: \.isUsable) {
++                let license = CrossOverLicense.check(crossOverRoot: install.crossOverRoot)
++                if license.licensed, RunnerStore.state() == .none {
++                    output.say("Setting up compatibility tool")
++                    _ = try RunnerSetup.run(from: install) { output.say($0.label) }
++                } else if !license.licensed, RunnerStore.state() == .none {
++                    output.say(license.detail)
++                }
++            }
++
++            let valve = try ValvePackageManifest.bundled()
++            let needsValve = valve.files.contains {
++                Digest.sha256IfPresent(SupportPaths.bridge.appending(path: $0.bridgePath)) != $0.sha256
++            }
++            if needsValve {
++                output.say("Downloading missing components")
++                _ = try await ValveFetcher.run { output.say($0.label) }
++            }
++
++            try SteamInstaller.finish(result)
++            return 0
++        } catch {
++            FileHandle.standardError.write(Data("\(error.localizedDescription)\n".utf8))
++            return 1
++        }
++    }
++
++    private final class Output: @unchecked Sendable {
++        func say(_ line: String) {
++            FileHandle.standardOutput.write(Data("\(line)\n".utf8))
++        }
++    }
++}
