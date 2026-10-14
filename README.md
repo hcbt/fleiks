@@ -24,7 +24,7 @@ nix run github:hcbt/fleiks#xirp
 | `liqoctl`   | `liqoctl`        | Liqo CLI for multi-cluster Kubernetes. Apache-2.0. |
 | `mflux`     | `mflux-generate` | MLX image models. MIT. Apple Silicon only. Newer than nixpkgs 0.15.4. |
 | `muse-code` | `muse`           | Meta Muse Code CLI. Unfree native binary.  |
-| `notproton` | `notproton`      | Steam Play for macOS Steam via CrossOver. GPL-3.0-only. Darwin arm64 only; needs macOS 15+. |
+| `notproton` | `notproton`      | Steam Play for macOS Steam via CrossOver. Built from upstream source; `apple-sdk-26.patch` builds it against nixpkgs' macOS 26 SDK. GPL-3.0-only. Darwin arm64 only. |
 | `opencodex` | `ocx`            | Provider proxy for Codex / Claude Code. MIT. Also installs `opencodex`. |
 | `sogen`     | `analyzer`       | Windows and Linux userspace emulator with GDB support. GPL-2.0-only. |
 | `steam`     | `steam`          | Steam client for macOS, pre-patched for NotProton. Unfree bootstrap dmg; x86_64 binary (Rosetta on Apple Silicon), self-updates on first launch. Darwin only. |
