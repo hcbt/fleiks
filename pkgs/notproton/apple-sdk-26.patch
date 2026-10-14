@@ -5245,3 +5245,51 @@ diff -r np-upstream/app/Sources/NotProtonApp/Views/StatusView.swift np-patched/a
                  let name = build.id == holder && index == 0 ? legacyToolName : tool.name
                  return InstalledTool(
                      tool: CompatTool(name: name, flavor: tool.flavor, display: tool.display), build: build.id
+--- a/app/Sources/NotProtonApp/Model/ValvePackageManifest.swift	2026-10-14 04:21:15.000000000 +0300
++++ b/app/Sources/NotProtonApp/Model/ValvePackageManifest.swift	2026-10-14 12:52:24.785525321 +0300
+@@ -45,7 +45,7 @@
+     private static let step = String(localized: "Read the Valve file list")
+ 
+     static func bundled() throws -> ValvePackageManifest {
+-        guard let url = Bundle.module.url(
++        guard let url = ResourceBundle.module.url(
+             forResource: resourceName, withExtension: resourceExtension
+         ) else {
+             throw StepFailure(
+--- a/app/Sources/NotProtonApp/Model/PayloadManifest.swift	2026-10-14 04:21:15.000000000 +0300
++++ b/app/Sources/NotProtonApp/Model/PayloadManifest.swift	2026-10-14 12:52:24.786043447 +0300
+@@ -27,7 +27,7 @@
+     static let resourceExtension = "manifest"
+ 
+     static func bundled() throws -> PayloadManifest {
+-        guard let url = Bundle.module.url(
++        guard let url = ResourceBundle.module.url(
+             forResource: resourceName, withExtension: resourceExtension
+         ) else {
+             throw StepFailure(
+--- a/app/Sources/NotProtonApp/Model/NtdllPatcher.swift	2026-10-14 04:21:15.000000000 +0300
++++ b/app/Sources/NotProtonApp/Model/NtdllPatcher.swift	2026-10-14 12:52:24.786511864 +0300
+@@ -527,7 +527,7 @@
+     // Resources
+ 
+     static func payload(for patch: NtdllPatch) throws -> Data {
+-        guard let url = Bundle.module.url(forResource: patch.payloadResource, withExtension: "bin") else {
++        guard let url = ResourceBundle.module.url(forResource: patch.payloadResource, withExtension: "bin") else {
+             throw StepFailure(
+                 step: step,
+                 detail: String(localized: "\(patch.payloadResource).bin is missing from the app's resources.")
+--- /dev/null	2026-10-14 12:52:24.041309000 +0300
++++ b/app/Sources/NotProtonApp/Support/ResourceBundle.swift	2026-10-14 12:52:24.784690236 +0300
+@@ -0,0 +1,12 @@
++import Foundation
++
++enum ResourceBundle {
++    static var module: Bundle {
++        let name = "NotProtonApp_NotProtonApp"
++        if let url = Bundle.main.url(forResource: name, withExtension: "bundle"),
++           let bundle = Bundle(url: url) {
++            return bundle
++        }
++        return Bundle.main
++    }
++}

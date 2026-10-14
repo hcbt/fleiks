@@ -145,9 +145,6 @@ stdenv.mkDerivation {
     cp -R $bin/Sparkle.framework $app/Contents/Frameworks/Sparkle.framework
     install_name_tool -add_rpath @executable_path/../Frameworks $app/Contents/MacOS/NotProtonApp
     cp -R $bin/NotProtonApp_NotProtonApp.bundle $app/Contents/Resources/
-    mkdir -p $app/Contents/Resources/NotProtonApp_NotProtonApp.bundle/Contents/Resources
-    cp -R $app/Contents/Resources/NotProtonApp_NotProtonApp.bundle/payload \
-      $app/Contents/Resources/NotProtonApp_NotProtonApp.bundle/Contents/Resources/payload
     cp payload-zip/NotProton.app/Contents/Resources/Assets.car \
       payload-zip/NotProton.app/Contents/Resources/NotProton.icns \
       $app/Contents/Resources/

@@ -48,7 +48,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     cp -r Steam.app $out/Applications
 
     app=$out/Applications/Steam.app
-    payload=${notproton}/Applications/NotProton.app/Contents/Resources/NotProtonApp_NotProtonApp.bundle/Contents/Resources/payload
+    payload=${notproton}/Applications/NotProton.app/Contents/Resources/NotProtonApp_NotProtonApp.bundle/payload
     install -m 755 $payload/notproton.dylib $app/Contents/MacOS/notproton.dylib
 
     plist=$app/Contents/Info.plist
