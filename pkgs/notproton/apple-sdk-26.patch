@@ -5293,3 +5293,23 @@ diff -r np-upstream/app/Sources/NotProtonApp/Views/StatusView.swift np-patched/a
 +        return Bundle.main
 +    }
 +}
+--- a/app/Sources/NotProtonApp/Model/InstallPayload.swift	2026-10-14 04:21:15.000000000 +0300
++++ b/app/Sources/NotProtonApp/Model/InstallPayload.swift	2026-10-14 13:21:08.123786607 +0300
+@@ -18,7 +18,7 @@
+         let fonts: [String]
+     }
+ 
+-    static func root(in bundle: Bundle = .module) throws -> URL {
++    static func root(in bundle: Bundle = ResourceBundle.module) throws -> URL {
+         guard let url = bundle.url(forResource: "payload", withExtension: nil) else {
+             throw StepFailure(
+                 step: step,
+@@ -28,7 +28,7 @@
+         return url
+     }
+ 
+-    static func locate(in bundle: Bundle = .module) throws -> Located {
++    static func locate(in bundle: Bundle = ResourceBundle.module) throws -> Located {
+         try locate(root: try root(in: bundle))
+     }
+ 
