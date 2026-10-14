@@ -31,6 +31,14 @@ nix run github:hcbt/fleiks#xirp
 | `utm`       | `UTM`            | Virtual machines for macOS. Apache-2.0 dmg; newer than nixpkgs 4.7.5. Darwin only. |
 | `xirp`      | `xirp`           | Spotify AI coding agent with Portal. Unfree Darwin dmg. |
 
+Steam self-updates inside its bundle (the dmg's 6.0 x86_64 bootstrap becomes a
+universal 6.1 build). If a copy in `/Applications` is then killed at launch
+with `Taskgated Invalid Signature` despite `codesign --verify` passing,
+LaunchServices still holds the old bundle's registration; repair it with
+`lsregister -f /Applications/Steam.app`. Running the store copy via
+`bin/steam` avoids this: the read-only bundle makes the updater relocate to
+`~/Library/Application Support/Steam` instead of rewriting the bundle.
+
 Sogen is built from a pinned source commit with SDL3 and the Steam bridge enabled.
 Steamworks headers are pinned from Valve's Proton repository and the bridge is
 generated during the build. The optional Rust (Icicle) backend and Python bindings
