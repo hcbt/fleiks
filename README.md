@@ -27,16 +27,17 @@ nix run github:hcbt/fleiks#xirp
 | `notproton` | `notproton`      | Steam Play for macOS Steam via CrossOver. GPL-3.0-only. Darwin arm64 only; needs macOS 15+. |
 | `opencodex` | `ocx`            | Provider proxy for Codex / Claude Code. MIT. Also installs `opencodex`. |
 | `sogen`     | `analyzer`       | Windows and Linux userspace emulator with GDB support. GPL-2.0-only. |
-| `steam`     | `steam`          | Steam client for macOS. Unfree bootstrap dmg; x86_64 binary (Rosetta on Apple Silicon), self-updates on first launch. Darwin only. |
+| `steam`     | `steam`          | Steam client for macOS, pre-patched for NotProton. Unfree bootstrap dmg; x86_64 binary (Rosetta on Apple Silicon), self-updates on first launch. Darwin only. |
 | `utm`       | `UTM`            | Virtual machines for macOS. Apache-2.0 dmg; newer than nixpkgs 4.7.5. Darwin only. |
 | `xirp`      | `xirp`           | Spotify AI coding agent with Portal. Unfree Darwin dmg. |
 
-Steam self-updates inside its bundle (the dmg's 6.0 x86_64 bootstrap becomes a
-universal 6.1 build). If a copy in `/Applications` is then killed at launch
-with `Taskgated Invalid Signature` despite `codesign --verify` passing,
-LaunchServices still holds the old bundle's registration; repair it with
-`lsregister -f /Applications/Steam.app`. Running the store copy via
-`bin/steam` avoids this: the read-only bundle makes the updater relocate to
+The steam bundle is pre-patched for NotProton at build time (notproton.dylib
+injected via `LSEnvironment`, ad-hoc re-signed; the dylib is taken from the
+`notproton` package, so bumping that rebuilds this one). The insert path is
+pinned to `/Applications/Nix Apps/Steam.app`, where nix-darwin installs it
+and where NotProton looks for it; NotProton recognises the pre-patched
+state and never writes to the read-only bundle. Launching the store copy
+via `bin/steam` also works: the updater relocates to
 `~/Library/Application Support/Steam` instead of rewriting the bundle.
 
 Sogen is built from a pinned source commit with SDL3 and the Steam bridge enabled.
