@@ -12,12 +12,14 @@
 
 # Upstream source, built with the SDK pkgs.swift propagates (apple-sdk 26).
 # apple-sdk-26.patch drops ToolbarItem.visibilityPriority, which that SDK's
-# SwiftUI does not have, and splits the view bodies Swift 6.2.4 cannot
-# type-check as one expression. The injected payload is the v1.1.7 release
-# payload: building it needs a Wine tree and Dobby.
+# SwiftUI does not have, and splits view bodies the nixpkgs Swift cannot
+# type-check as one expression. The build expands string catalogs to .lproj;
+# that SDK cannot compile xcstrings. Payload is the v1.2.1 release zip
+# (building it needs a Wine tree and Dobby). srcRev is the latest commit
+# after that tag.
 let
-  version = "1.1.7";
-  srcRev = "86097bdcd028f1a47db751cedc7001785b97db4e";
+  version = "1.2.1";
+  srcRev = "b2f49e46ee874013b2818c32405e713f6fbfb68e";
   sparkleRev = "eef1a539a373c1f1a320624b1130fc5de7b2e100";
 in
 stdenv.mkDerivation {
@@ -28,14 +30,14 @@ stdenv.mkDerivation {
     owner = "NotProtonNot";
     repo = "NotProton";
     rev = srcRev;
-    hash = "sha256-4/K7ulIaMCXnIkxj+7BuYnkVoFNoLEmJpKF8/unh27s=";
+    hash = "sha256-qeAjgAVCCNU8MKUJPbi3XlWd+hU/Q+cStt4tYnBL2G4=";
   };
 
   patches = [ ./apple-sdk-26.patch ];
 
   payload = fetchurl {
     url = "https://github.com/NotProtonNot/NotProton/releases/download/v${version}/NotProton.zip";
-    hash = "sha256-3xFvUYX7V7b2+P9fWTuYUe22l6AXd+QD4f0jGF+b2/8=";
+    hash = "sha256-QroXc3GbX3PAAY4k33Q9Et4iLgyPcRXtgVp/xq4wjfE=";
   };
 
   sparkle = fetchFromGitHub {
@@ -121,6 +123,49 @@ stdenv.mkDerivation {
     os.makedirs("app/.build", exist_ok=True)
     with open("app/.build/workspace-state.json", "w") as f:
       json.dump(state, f)
+    PY
+    python3 - << 'PY'
+    import json
+    from pathlib import Path
+
+    root = Path("app/Sources/NotProtonApp/Resources/Localization")
+    catalog = json.loads((root / "Localizable.xcstrings").read_text())
+    source = catalog.get("sourceLanguage", "en")
+    strings = catalog.get("strings", {})
+    langs = {source}
+    for entry in strings.values():
+        langs.update(entry.get("localizations") or {})
+
+    def escape(text):
+        return (
+            text.replace("\\", "\\\\")
+            .replace('"', '\\"')
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t")
+        )
+
+    def translated(entry, lang, key):
+        loc = (entry.get("localizations") or {}).get(lang) or {}
+        unit = loc.get("stringUnit") or {}
+        if "value" in unit:
+            return unit["value"]
+        if lang == source:
+            return key
+        return None
+
+    for lang in sorted(langs):
+        lines = []
+        for key, entry in strings.items():
+            value = translated(entry, lang, key)
+            if value is None:
+                continue
+            lines.append(f'"{escape(key)}" = "{escape(value)}";')
+        dest = root / f"{lang}.lproj"
+        dest.mkdir(exist_ok=True)
+        (dest / "Localizable.strings").write_text("\n".join(lines) + "\n")
+
+    (root / "Localizable.xcstrings").unlink()
     PY
 
     TERM=dumb swift build --package-path app -c release --disable-sandbox

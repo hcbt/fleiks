@@ -8,24 +8,23 @@
 let
   # Bump: GET https://api.meta.ai/muse-code/channels/muse-stable
   # then GET that manifest_url and copy artifacts.<platform>.checksum.
-  version = "1.4.7-R6101.1";
-
+  version = "1.4.13-R6996.1";
   sources = {
     aarch64-darwin = {
       file = "muse-aarch64-macos";
-      hash = "sha256-h/9aMbY+MLasBNPoKYKFUX51PBJvtvOu6ArM8oxFYvE=";
+      hash = "sha256-n9QK6cbfuEfj71i2FAXABNDrvxnOsCl76Wb3ULO4SqA=";
     };
     x86_64-darwin = {
       file = "muse-x86-macos";
-      hash = "sha256-bXZtpmAaCq6L0iKUwIVJcChuG5reMAnw0CibeHWhDFg=";
+      hash = "sha256-WKngBqqwKTTz0g9INUmZu63GYf9/vjqoP9DcSL7VIP0=";
     };
     aarch64-linux = {
       file = "muse-aarch64-linux";
-      hash = "sha256-SNs8dGjNT0Ae/5tBX7fgzf4DUfsXMGSc6uKg92biO4U=";
+      hash = "sha256-x/J4tfEoYvVyHHNDOXYlaqKoq9QzoS2g5ITTCwjAJP8=";
     };
     x86_64-linux = {
       file = "muse-x86-linux";
-      hash = "sha256-NuPayR9WwVVyuVvlXXDun9loXNmrSfdHurR0bI18JRg=";
+      hash = "sha256-Uel/jeCqF1CA5ldsvAVVEKld/g7e3xdcf2s0/I479SQ=";
     };
   };
 

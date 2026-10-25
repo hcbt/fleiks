@@ -14,7 +14,7 @@
 let
   emulationRoot = fetchzip {
     url = "https://sogen.dev/root.zip";
-    hash = "sha256-17Gx1L5US2hz0eT/B1gvtUsakU7jXVQtr0p36LPUQyY=";
+    hash = "sha256-0na5TQzkLw69FhDpyhTm7Rqz8cvRavSefH7VwjN8gXg=";
   };
   steamworks = fetchFromGitHub {
     owner = "ValveSoftware";
@@ -25,14 +25,14 @@ let
 in
 stdenv.mkDerivation {
   pname = "sogen";
-  version = "0-unstable-2026-10-13";
+  version = "0-unstable-2026-10-25";
 
   src = fetchFromGitHub {
     owner = "momo5502";
     repo = "sogen";
-    rev = "d2552458877238ec0a4f68a1ae0e0c1a2118a50c";
+    rev = "258c531549fd7513c5698b2bbf4fb1fc2a080fea";
     fetchSubmodules = true;
-    hash = "sha256-14WrfPwJ8MYWvkAPIz2jTIe0jB4hxHBbWKe/UnsZaBU=";
+    hash = "sha256-NaT0pGfwiKI2APxECFcN5wLoqa8q5Di+FSIz3YOGIUI=";
   };
 
   # FEX requires its git hash even when building an exported source tree.
@@ -54,6 +54,15 @@ stdenv.mkDerivation {
     pkg-config
   ];
   buildInputs = [ sdl3 ];
+  # HVF ad-hoc signs with codesign, which lives in /usr/bin and is not on PATH.
+  # Restore PATH afterwards so fixup keeps nix's find and cut.
+  preBuild = ''
+    export NIX_ORIG_PATH="$PATH"
+    export PATH="/usr/bin:$PATH"
+  '';
+  postBuild = ''
+    export PATH="$NIX_ORIG_PATH"
+  '';
   cmakeFlags = [
     (lib.cmakeBool "SOGEN_BUILD_STATIC" true)
     (lib.cmakeBool "SOGEN_ENABLE_RUST_CODE" false)

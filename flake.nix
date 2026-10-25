@@ -41,7 +41,6 @@
             opencodex
             sogen
             steam
-            utm
             xirp
             ;
         }
