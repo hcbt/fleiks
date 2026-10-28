@@ -34,6 +34,7 @@
         in
         {
           inherit (pkgs)
+            buzz
             liqoctl
             mflux
             muse-code

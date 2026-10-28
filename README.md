@@ -5,6 +5,7 @@ package under `pkgs/`. The flake exports `overlays.default`,
 `packages.<system>.<name>`, and `apps.aarch64-darwin.mflux-generate-qwen-21`.
 
 ```
+nix run github:hcbt/fleiks#buzz
 nix run github:hcbt/fleiks#liqoctl -- version --client
 nix run github:hcbt/fleiks#mflux -- --help
 nix run github:hcbt/fleiks#mflux-generate-qwen-21 -- --help
@@ -20,6 +21,7 @@ nix run github:hcbt/fleiks#xirp
 
 | Attribute   | Program          | Notes                                      |
 | ----------- | ---------------- | ------------------------------------------ |
+| `buzz`      | `buzz`           | Offline audio transcription with Whisper. MIT. Upstream macOS dmg (APFS, unpacked with 7zz); source build needs Python packages missing from nixpkgs. Darwin only. |
 | `liqoctl`   | `liqoctl`        | Liqo CLI for multi-cluster Kubernetes. Apache-2.0. |
 | `mflux`     | `mflux-generate` | MLX image models. MIT. Apple Silicon only. Newer than nixpkgs 0.15.4. |
 | `muse-code` | `muse`           | Meta Muse Code CLI. Unfree native binary.  |
