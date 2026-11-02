@@ -9,35 +9,174 @@
  
      if not channels:
          scan, _err = iface.scanForNetworksWithName_error_(None, None)
-@@ -230,7 +230,7 @@
+@@ -230,80 +230,108 @@
              by_num[num] = cw
      targets = [by_num[n] for n in channels if n in by_num]
      if not targets:
 -        return []
 +        raise RuntimeError(f"no supported channels for {interface!r}: {channels}")
  
-     # Create the capture file securely: root writes to it via tcpdump -w, so a
-     # predictable mktemp() path in world-writable /tmp is a symlink/TOCTOU risk.
-@@ -239,14 +239,16 @@
-     proc = subprocess.Popen(
-         ["/usr/sbin/tcpdump", "-I", "-i", interface, "-y", "IEEE802_11_RADIO",
-          "-w", pcap, "-U", "-s", "512"],
+-    # Create the capture file securely: root writes to it via tcpdump -w, so a
+-    # predictable mktemp() path in world-writable /tmp is a symlink/TOCTOU risk.
+-    fd, pcap = tempfile.mkstemp(suffix=".pcap", dir="/tmp")
+-    os.close(fd)
+-    proc = subprocess.Popen(
+-        ["/usr/sbin/tcpdump", "-I", "-i", interface, "-y", "IEEE802_11_RADIO",
+-         "-w", pcap, "-U", "-s", "512"],
 -        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-+        stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
-     time.sleep(1.2)
-     if proc.poll() is not None:                 # tcpdump failed to enter RFMON
-+        err = proc.stderr.read().decode(errors="replace").strip()
-         try:
-             os.unlink(pcap)
-         except OSError:
-             pass
+-    time.sleep(1.2)
+-    if proc.poll() is not None:                 # tcpdump failed to enter RFMON
+-        try:
+-            os.unlink(pcap)
+-        except OSError:
+-            pass
 -        return []
-+        raise RuntimeError(
-+            f"tcpdump could not enter monitor mode on {interface!r}: {err or 'no error output'}")
++    from scapy.all import rdpcap
++    from scapy.layers.dot11 import Dot11Beacon, Dot11ProbeResp
  
-     # Free the card only now that RFMON is confirmed up, so a doomed attempt
-     # (e.g. no BPF access) does not needlessly drop the user's Wi-Fi.
-@@ -967,6 +969,7 @@
+-    # Free the card only now that RFMON is confirmed up, so a doomed attempt
+-    # (e.g. no BPF access) does not needlessly drop the user's Wi-Fi.
++    # CoreWLAN must tune the channel before pcap_activate() takes over the
++    # interface, so each channel gets its own tcpdump session instead of
++    # hopping while RFMON is active.
+     try:
+         iface.disassociate()
+     except Exception:
+         pass
+ 
++    found = {}
+     start = time.time()
+-    try:
+-        for _ in range(rounds):
+-            for cw in targets:
+-                iface.setWLANChannel_error_(cw, None)
+-                time.sleep(dwell)
+-                if time.time() - start > max_seconds:
+-                    raise TimeoutError
+-    except TimeoutError:
+-        pass
+-    finally:
++    captured = 0
++    errors = []
++    for cw in targets:
++        if time.time() - start > max_seconds:
++            break
++        chan = cw.channelNumber()
++        try:
++            res = iface.setWLANChannel_error_(cw, None)
++            if isinstance(res, tuple):
++                ok, err = res
++            else:
++                ok, err = res, None
++            if not ok:
++                errors.append(f"channel {chan}: {err}")
++                continue
++        except Exception as e:
++            errors.append(f"channel {chan}: {e}")
++            continue
++
++        # Create the capture file securely: root writes to it via tcpdump -w,
++        # so a predictable mktemp() path in world-writable /tmp is a
++        # symlink/TOCTOU risk.
++        fd, pcap = tempfile.mkstemp(suffix=".pcap", dir="/tmp")
++        os.close(fd)
++        proc = subprocess.Popen(
++            ["/usr/sbin/tcpdump", "-I", "-i", interface, "-y", "IEEE802_11_RADIO",
++             "-w", pcap, "-U", "-s", "512"],
++            stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
++        time.sleep(1.2)
++        if proc.poll() is not None:             # tcpdump failed to enter RFMON
++            err = proc.stderr.read().decode(errors="replace").strip()
++            try:
++                os.unlink(pcap)
++            except OSError:
++                pass
++            raise RuntimeError(
++                f"tcpdump could not enter monitor mode on {interface!r}: "
++                f"{err or 'no error output'}")
++
++        time.sleep(dwell * rounds)
+         proc.send_signal(signal.SIGINT)
+         try:
+             proc.wait(timeout=5)
+         except Exception:
+             proc.kill()
++            proc.wait()
++        err = proc.stderr.read().decode(errors="replace").strip()
++        if err:
++            errors.append(f"channel {chan}: {err.splitlines()[-1]}")
+ 
+-    from scapy.all import rdpcap
+-    from scapy.layers.dot11 import Dot11Beacon, Dot11ProbeResp
+-    try:
+-        pkts = rdpcap(pcap)
+-    except Exception:
+-        pkts = []
+-    finally:
+         try:
+-            os.unlink(pcap)
+-        except Exception:
+-            pass
++            pkts = rdpcap(pcap)
++        except Exception as e:
++            pkts = []
++            errors.append(f"channel {chan}: could not read capture: {e}")
++        finally:
++            try:
++                os.unlink(pcap)
++            except Exception:
++                pass
+ 
+-    found = {}
+-    for p in pkts:
+-        if not (p.haslayer(Dot11Beacon) or p.haslayer(Dot11ProbeResp)):
+-            continue
+-        parsed = _parse_beacon(p)
+-        if not parsed:
+-            continue
+-        bssid, ssid, channel, rssi = parsed
+-        e = found.get(bssid)
+-        if e is None:
+-            e = {"bssid": bssid, "ssid": ssid, "channel": channel,
+-                 "rssi": rssi, "count": 0}
+-            found[bssid] = e
+-        e["count"] += 1
+-        if ssid and not e["ssid"]:
+-            e["ssid"] = ssid
+-        if channel and not e["channel"]:
+-            e["channel"] = channel
+-        if rssi is not None and (e["rssi"] is None or rssi > e["rssi"]):
+-            e["rssi"] = rssi          # keep the strongest sample
++        captured += len(pkts)
++        for p in pkts:
++            if not (p.haslayer(Dot11Beacon) or p.haslayer(Dot11ProbeResp)):
++                continue
++            parsed = _parse_beacon(p)
++            if not parsed:
++                continue
++            bssid, ssid, channel, rssi = parsed
++            e = found.get(bssid)
++            if e is None:
++                e = {"bssid": bssid, "ssid": ssid, "channel": channel,
++                     "rssi": rssi, "count": 0}
++                found[bssid] = e
++            e["count"] += 1
++            if ssid and not e["ssid"]:
++                e["ssid"] = ssid
++            if channel and not e["channel"]:
++                e["channel"] = channel
++            if rssi is not None and (e["rssi"] is None or rssi > e["rssi"]):
++                e["rssi"] = rssi          # keep the strongest sample
++
++    if not found:
++        detail = "; ".join(errors) if errors else f"captured {captured} frame(s)"
++        raise RuntimeError(
++            f"monitor mode found no beacon frames on channels "
++            f"{[cw.channelNumber() for cw in targets]}: {detail}")
+     return list(found.values())
+ 
+ 
+@@ -967,6 +995,7 @@
              if subprocess.run(["sudo", "-v"]).returncode != 0:
                  self.log.error("sudo authentication failed; cannot recover BSSIDs.")
                  return []
