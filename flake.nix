@@ -34,6 +34,7 @@
         in
         {
           inherit (pkgs)
+            airjack
             buzz
             liqoctl
             mflux
