@@ -3,7 +3,9 @@
   darwin,
   fetchFromGitHub,
   python3Packages,
+  airsnare,
   hashcat,
+  hcxtools,
 }:
 
 let
@@ -84,6 +86,17 @@ let
     description = "PyObjC wrappers for the CoreLocation framework on macOS";
     imports = [ "CoreLocation" ];
   };
+
+  # nixpkgs marks hcxtools Linux-only, but it builds on Darwin; the install
+  # target only needs $out/bin to exist first.
+  hcxtoolsDarwin = hcxtools.overrideAttrs (old: {
+    preInstall = (old.preInstall or "") + ''
+      mkdir -p $out/bin
+    '';
+    meta = old.meta // {
+      platforms = lib.platforms.darwin;
+    };
+  });
 in
 buildPythonApplication (finalAttrs: {
   pname = "airjack";
@@ -109,13 +122,16 @@ buildPythonApplication (finalAttrs: {
     scapy
   ];
 
-  # AirSnare and zizzania are not in nixpkgs; hashcat is, and AirJack finds
-  # hcxpcapngtool on PATH when hcxtools is installed.
+  # AirJack finds these on PATH; zizzania remains an optional external backend.
   makeWrapperArgs = [
     "--prefix"
     "PATH"
     ":"
-    "${lib.makeBinPath [ hashcat ]}"
+    "${lib.makeBinPath [
+      airsnare
+      hashcat
+      hcxtoolsDarwin
+    ]}"
   ];
 
   installPhase = ''
