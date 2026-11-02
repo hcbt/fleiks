@@ -110,6 +110,8 @@ buildPythonApplication (finalAttrs: {
     hash = "sha256-vo5sn6dkX7a6hMQP6s2tsk9ktVd16TqNvYX1CXXWBPY=";
   };
 
+  patches = [ ./diagnostics.patch ];
+
   # No setup.py or pyproject.toml upstream; install the script and man page.
   format = "other";
   dontBuild = true;
