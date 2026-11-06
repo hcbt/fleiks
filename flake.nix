@@ -37,6 +37,7 @@
             airjack
             airsnare
             buzz
+            kugelblitz
             liqoctl
             mflux
             muse-code
