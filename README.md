@@ -15,6 +15,7 @@ nix run github:hcbt/fleiks#mflux-generate-qwen-21 -- --help
 nix run github:hcbt/fleiks#muse-code -- --version
 nix run github:hcbt/fleiks#notproton
 nix run github:hcbt/fleiks#opencodex -- --version
+nix run github:hcbt/fleiks#rekordbox
 nix run github:hcbt/fleiks#rbxport
 nix run github:hcbt/fleiks#sogen -- --help
 nix run github:hcbt/fleiks#steam
@@ -34,6 +35,7 @@ nix run github:hcbt/fleiks#xirp
 | `muse-code` | `muse`           | Meta Muse Code CLI. Unfree native binary.  |
 | `notproton` | `notproton`      | Steam Play for macOS Steam via CrossOver. Built from upstream source; `apple-sdk-26.patch` builds it against nixpkgs' macOS 26 SDK. GPL-3.0-only. Darwin arm64 only. |
 | `opencodex` | `ocx`            | Provider proxy for Codex / Claude Code. MIT. Also installs `opencodex`. |
+| `rekordbox` | `rekordbox`      | Pioneer DJ rekordbox. Unfree. Official pkg payload; only the .app is kept, so the bundle's updater cannot replace it. Darwin only. |
 | `rbxport`   | `rbxport`        | Rekordbox-compatible DJ library manager with USB export and PRO DJ LINK. GPL-2.0-or-later. Official notarized dmg. The built-in updater cannot replace a Nix store bundle: turn off Download updates in Preferences and update through Nix. Darwin only. |
 | `sogen`     | `analyzer`       | Windows and Linux userspace emulator with GDB support. GPL-2.0-only. |
 | `steam`     | `steam`          | Steam client for macOS, pre-patched for NotProton. Unfree bootstrap dmg; x86_64 binary (Rosetta on Apple Silicon), self-updates on first launch. Darwin only. |

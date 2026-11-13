@@ -43,6 +43,7 @@
             muse-code
             notproton
             opencodex
+            rekordbox
             rbxport
             sogen
             steam
