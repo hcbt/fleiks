@@ -15,6 +15,7 @@ nix run github:hcbt/fleiks#mflux-generate-qwen-21 -- --help
 nix run github:hcbt/fleiks#muse-code -- --version
 nix run github:hcbt/fleiks#notproton
 nix run github:hcbt/fleiks#opencodex -- --version
+nix run github:hcbt/fleiks#rbxport
 nix run github:hcbt/fleiks#sogen -- --help
 nix run github:hcbt/fleiks#steam
 nix run github:hcbt/fleiks#xirp
@@ -33,6 +34,7 @@ nix run github:hcbt/fleiks#xirp
 | `muse-code` | `muse`           | Meta Muse Code CLI. Unfree native binary.  |
 | `notproton` | `notproton`      | Steam Play for macOS Steam via CrossOver. Built from upstream source; `apple-sdk-26.patch` builds it against nixpkgs' macOS 26 SDK. GPL-3.0-only. Darwin arm64 only. |
 | `opencodex` | `ocx`            | Provider proxy for Codex / Claude Code. MIT. Also installs `opencodex`. |
+| `rbxport`   | `rbxport`        | Rekordbox-compatible DJ library manager with USB export and PRO DJ LINK. GPL-2.0-or-later. Official notarized dmg. The built-in updater cannot replace a Nix store bundle: turn off Download updates in Preferences and update through Nix. Darwin only. |
 | `sogen`     | `analyzer`       | Windows and Linux userspace emulator with GDB support. GPL-2.0-only. |
 | `steam`     | `steam`          | Steam client for macOS, pre-patched for NotProton. Unfree bootstrap dmg; x86_64 binary (Rosetta on Apple Silicon), self-updates on first launch. Darwin only. |
 | `xirp`      | `xirp`           | Spotify AI coding agent with Portal. Unfree Darwin dmg. |
@@ -108,10 +110,11 @@ Apply the overlay so the packages show up on `pkgs`. Unfree packages need
     pkgs.muse-code
     pkgs.notproton
     pkgs.opencodex
+    pkgs.rbxport
     pkgs.steam
     pkgs.xirp
   ];
-  # home.packages = [ pkgs.liqoctl pkgs.mflux pkgs.muse-code pkgs.notproton pkgs.opencodex pkgs.steam pkgs.xirp ];
+  # home.packages = [ pkgs.liqoctl pkgs.mflux pkgs.muse-code pkgs.notproton pkgs.opencodex pkgs.rbxport pkgs.steam pkgs.xirp ];
 }
 ```
 
@@ -119,7 +122,7 @@ Without an overlay, take the flake package directly:
 
 ```nix
 inputs.fleiks.packages.${pkgs.stdenv.hostPlatform.system}.liqoctl
-# or .mflux / .muse-code / .notproton / .opencodex / .steam / .xirp
+# or .mflux / .muse-code / .notproton / .opencodex / .rbxport / .steam / .xirp
 ```
 
 ## devenv
@@ -156,6 +159,7 @@ inputs:
     pkgs.muse-code
     pkgs.notproton
     pkgs.opencodex
+    pkgs.rbxport
     pkgs.steam
     pkgs.xirp
 }
