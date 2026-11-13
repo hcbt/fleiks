@@ -50,8 +50,13 @@ stdenvNoCC.mkDerivation {
     mkdir -p $out/Applications
     cp -R rekordbox.app $out/Applications/
 
+    # Nix canonicalises store files to 0444. rekordbox copies
+    # Contents/Resources/{master,product}.db into ~/Library/Pioneer/rekordbox on
+    # first launch and opens them read-write; a copy that inherits 0444 fails
+    # with "Unable to open the database file". Seed writable copies first.
     mkdir -p $out/bin
-    makeWrapper $out/Applications/rekordbox.app/Contents/MacOS/rekordbox $out/bin/rekordbox
+    makeWrapper $out/Applications/rekordbox.app/Contents/MacOS/rekordbox $out/bin/rekordbox \
+      --run 'data="$HOME/Library/Pioneer/rekordbox"; mkdir -p "$data"; for f in master.db product.db; do [ -e "$data/$f" ] || cp "'"$out"'/Applications/rekordbox.app/Contents/Resources/$f" "$data/$f"; chmod u+w "$data/$f" 2>/dev/null || true; done'
 
     runHook postInstall
   '';
