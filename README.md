@@ -19,6 +19,7 @@ nix run github:hcbt/fleiks#rekordbox
 nix run github:hcbt/fleiks#rbxport
 nix run github:hcbt/fleiks#sogen -- --help
 nix run github:hcbt/fleiks#steam
+nix run github:hcbt/fleiks#vibe-desktop
 nix run github:hcbt/fleiks#xirp
 ```
 
@@ -39,6 +40,7 @@ nix run github:hcbt/fleiks#xirp
 | `rbxport`   | `rbxport`        | Rekordbox-compatible DJ library manager with USB export and PRO DJ LINK. GPL-2.0-or-later. Official notarized dmg. The built-in updater cannot replace a Nix store bundle: turn off Download updates in Preferences and update through Nix. Darwin only. |
 | `sogen`     | `analyzer`       | Windows and Linux userspace emulator with GDB support. GPL-2.0-only. |
 | `steam`     | `steam`          | Steam client for macOS, pre-patched for NotProton. Unfree bootstrap dmg; x86_64 binary (Rosetta on Apple Silicon), self-updates on first launch. Darwin only. |
+| `vibe-desktop` | `vibe`        | Mistral Vibe desktop app: AI chat and coding agent. Unfree. Official notarized dmg, Apple silicon only. The built-in updater cannot replace a Nix store bundle: update through Nix. |
 | `xirp`      | `xirp`           | Spotify AI coding agent with Portal. Unfree Darwin dmg. |
 
 UTM is nixpkgs 5.0.8, so this overlay no longer replaces it.
@@ -114,9 +116,10 @@ Apply the overlay so the packages show up on `pkgs`. Unfree packages need
     pkgs.opencodex
     pkgs.rbxport
     pkgs.steam
+    pkgs.vibe-desktop
     pkgs.xirp
   ];
-  # home.packages = [ pkgs.liqoctl pkgs.mflux pkgs.muse-code pkgs.notproton pkgs.opencodex pkgs.rbxport pkgs.steam pkgs.xirp ];
+  # home.packages = [ pkgs.liqoctl pkgs.mflux pkgs.muse-code pkgs.notproton pkgs.opencodex pkgs.rbxport pkgs.steam pkgs.vibe-desktop pkgs.xirp ];
 }
 ```
 
@@ -124,7 +127,7 @@ Without an overlay, take the flake package directly:
 
 ```nix
 inputs.fleiks.packages.${pkgs.stdenv.hostPlatform.system}.liqoctl
-# or .mflux / .muse-code / .notproton / .opencodex / .rbxport / .steam / .xirp
+# or .mflux / .muse-code / .notproton / .opencodex / .rbxport / .steam / .vibe-desktop / .xirp
 ```
 
 ## devenv
@@ -163,6 +166,7 @@ inputs:
     pkgs.opencodex
     pkgs.rbxport
     pkgs.steam
+    pkgs.vibe-desktop
     pkgs.xirp
 }
 ```
@@ -179,6 +183,7 @@ Without the yaml overlay, pull the package from the flake output:
     inputs.fleiks.packages.${pkgs.stdenv.system}.notproton
     inputs.fleiks.packages.${pkgs.stdenv.system}.opencodex
     inputs.fleiks.packages.${pkgs.stdenv.system}.steam
+    inputs.fleiks.packages.${pkgs.stdenv.system}.vibe-desktop
     inputs.fleiks.packages.${pkgs.stdenv.system}.xirp
 }
 ```

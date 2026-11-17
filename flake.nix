@@ -47,6 +47,7 @@
             rbxport
             sogen
             steam
+            vibe-desktop
             xirp
             ;
         }
