@@ -8,6 +8,7 @@ package under `pkgs/`. The flake exports `overlays.default`,
 nix run github:hcbt/fleiks#airjack -- --help
 nix run github:hcbt/fleiks#airsnare -- --help
 nix run github:hcbt/fleiks#buzz
+nix run github:hcbt/fleiks#cdj3k-emu -- --help
 nix run github:hcbt/fleiks#kugelblitz
 nix run github:hcbt/fleiks#liqoctl -- version --client
 nix run github:hcbt/fleiks#mflux -- --help
@@ -30,6 +31,7 @@ nix run github:hcbt/fleiks#xirp
 | `airjack`   | `airjack`        | macOS Wi-Fi security testing: scan, capture WPA/WPA2 handshakes, crack with hashcat. MIT. Darwin only. Bundles AirSnare and hcxtools; zizzania remains an optional external backend. |
 | `airsnare`  | `airsnare`       | WPA handshake capture backend with deauthentication. MIT. Darwin only. |
 | `buzz`      | `buzz`           | Offline audio transcription with Whisper. MIT. Upstream macOS dmg (APFS, unpacked with 7zz); source build needs Python packages missing from nixpkgs. Darwin only. |
+| `cdj3k-emu` | `cdj3k-emu`      | Pioneer CDJ-3000/3000X/1500X emulator: stock firmware in QEMU with emulated controls, USB and Pro DJ Link. MIT/Apache-2.0. Universal notarized dmg; needs your own firmware `.UPD` and key. The built-in updater cannot replace a Nix store bundle: update through Nix. Darwin only. |
 | `kugelblitz` | `kugelblitz`    | 3D globe and atlas for macOS with open geodata on real terrain. Unfree. Apple silicon only. |
 | `liqoctl`   | `liqoctl`        | Liqo CLI for multi-cluster Kubernetes. Apache-2.0. |
 | `mflux`     | `mflux-generate` | MLX image models. MIT. Apple Silicon only. Newer than nixpkgs 0.15.4. |

@@ -37,6 +37,7 @@
             airjack
             airsnare
             buzz
+            cdj3k-emu
             kugelblitz
             liqoctl
             mflux
