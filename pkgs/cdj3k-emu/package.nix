@@ -2,6 +2,7 @@
   lib,
   undmg,
   makeWrapper,
+  writeShellScript,
   fetchurl,
   stdenvNoCC,
 }:
@@ -19,6 +20,35 @@
 # a Nix store bundle: update through Nix.
 let
   version = "0.4.1";
+
+  # The firmware wizard copies Contents/Resources/Image with fs::copy, which
+  # preserves the source mode, then reopens the copy for writing to fsync it.
+  # Store files are 0444, so that reopen fails with EACCES and the install
+  # aborts after the eMMC is built. Stage a writable copy of Resources in the
+  # user's cache and point the app at it with CDJ3K_RESOURCES, which its
+  # bundled::resources() checks first. The bundle itself stays untouched.
+  stageResources = writeShellScript "cdj3k-emu-stage-resources" ''
+    src=$1
+    cache="''${XDG_CACHE_HOME:-$HOME/Library/Caches}/cdj3k-emu/resources-${version}"
+
+    if [ ! -d "$cache" ]; then
+      tmp="$cache.tmp.$$"
+      rm -rf "$tmp"
+      mkdir -p "$tmp"
+      if cp -R "$src/." "$tmp/" && chmod -R u+w "$tmp"; then
+        if [ ! -d "$cache" ]; then
+          mv "$tmp" "$cache" 2>/dev/null || true
+        fi
+      fi
+      rm -rf "$tmp"
+    fi
+
+    if [ ! -d "$cache" ]; then
+      echo "cdj3k-emu: could not stage writable resources in $cache" >&2
+      exit 1
+    fi
+    printf '%s\n' "$cache"
+  '';
 in
 stdenvNoCC.mkDerivation {
   pname = "cdj3k-emu";
@@ -47,7 +77,8 @@ stdenvNoCC.mkDerivation {
     cp -R "CDJ3K Emulator.app" $out/Applications/
 
     mkdir -p $out/bin
-    makeWrapper "$out/Applications/CDJ3K Emulator.app/Contents/MacOS/cdj3k-emu" $out/bin/cdj3k-emu
+    makeWrapper "$out/Applications/CDJ3K Emulator.app/Contents/MacOS/cdj3k-emu" $out/bin/cdj3k-emu \
+      --run "resources=\"\$(${stageResources} \"$out/Applications/CDJ3K Emulator.app/Contents/Resources\")\" || exit 1; export CDJ3K_RESOURCES=\"\$resources\""
 
     runHook postInstall
   '';
